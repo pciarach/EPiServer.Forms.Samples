@@ -112,10 +112,10 @@
     <Content Include="ClientResources\epi-formssamples\FormsSamplesModule.js" />
     <Content Include="ClientResources\epi-formssamples\themes\sleek\FormsSamples.css" />
     <Content Include="ClientResources\epi-formssamples\themes\sleek\images\contenttypes\DateTimeElementBlock.png" />
-    <Content Include="ClientResources\epi-formssamples\themes\sleek\images\contenttypes\README.txt" />
+    <None Include="ClientResources\epi-formssamples\themes\sleek\images\contenttypes\README.md" />
     <Content Include="ClientResources\epi-formssamples\themes\sleek\images\formIcons16x16.png" />
     <Content Include="ClientResources\ViewMode\EPiServerFormsSamples.css" />
-    <Content Include="ClientResources\ViewMode\images\README.txt" />
+    <None Include="ClientResources\ViewMode\images\README.md" />
     <Content Include="ClientResources\ViewMode\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
     <Content Include="ClientResources\ViewMode\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
     <Content Include="ClientResources\ViewMode\images\ui-bg_flat_10_000000_40x100.png" />
@@ -137,6 +137,7 @@
     <Content Include="ClientResources\ViewMode\EPiServerFormsSamples.js" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="ClientResources\ViewMode\datetimepicker.modified.js" />
+    <Content Include="License.txt" />
     <Content Include="Views\Shared\EditorTemplates\FormModel.ascx" />
     <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN.xml" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <LessFiles Include="ClientResources\ViewMode\EPiServerFormsSamples.less" />
     <LessFiles Include="ClientResources\epi-formssamples\themes\sleek\FormsSamples.less" />
     <Content Include="Views\ElementBlocks\DateTimeElementBlock.cshtml" />
+    <None Include="README.md" />
     <None Include="Views\ElementBlocks\Web.config" />
     <None Include="module.config" />
   </ItemGroup>
