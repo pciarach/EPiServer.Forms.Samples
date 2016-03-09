@@ -235,12 +235,13 @@
 
     
     // init all DateTimeFormElement on the ViewMode with our modified jQuery DatePicker
-    $.each(__SamplesDateTimeElements || [], function (i, dateTimeElementInfo) {                        
-        $("#" + dateTimeElementInfo.guid).datetimepicker({
-            type: dateTimeElementInfo.pickerType,
-            constrainInput: false,
-            dateFormat: dateFormat
+    if (typeof __SamplesDateTimeElements != "undefined") {
+        $.each(__SamplesDateTimeElements || [], function (i, dateTimeElementInfo) {
+            $("#" + dateTimeElementInfo.guid).datetimepicker({
+                type: dateTimeElementInfo.pickerType,
+                constrainInput: false,
+                dateFormat: dateFormat
+            });
         });
-    });
-    
+    }
 })($$epiforms || $);
