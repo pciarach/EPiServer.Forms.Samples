@@ -104,7 +104,6 @@
     <Compile Include="Implementation\Elements\DateTimeElementBlock.cs" />
     <Compile Include="Implementation\Models\DateTimeElementInfo.cs" />
     <Compile Include="Implementation\Validation\DateTimeValidator.cs" />
-    <Compile Include="Implementation\VisitorData\DemoVisitorDataSource.cs" />
     <Compile Include="InitializationModule.cs" />
     <Compile Include="Criteria\FormCriterion.cs" />
     <Compile Include="Implementation\FormsSamplesViewLocation.cs" />
@@ -139,7 +138,9 @@
     <Content Include="ClientResources\ViewMode\datetimepicker.modified.js" />
     <Content Include="License.txt" />
     <Content Include="Views\Shared\EditorTemplates\FormModel.ascx" />
-    <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN.xml" />
+    <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EPiServer.Forms\EPiServer.Forms.csproj">

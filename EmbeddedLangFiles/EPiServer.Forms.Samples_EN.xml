@@ -57,16 +57,6 @@
                         <message>Enter a valid time, e.g. 10:20 AM.</message>
                     </episerver.forms.samples.implementation.validation.timevalidator>
                 </validators>
-
-                <visitordatasources>
-                    <episerver.forms.samples.implementation.visitordata.demovisitordatasource>
-                        <displayname>Demo Visitor Data Source</displayname>
-                        <properties>
-                            <demo_visitor_data_item_1>Demo Visitor Data - Item #1</demo_visitor_data_item_1>
-                            <demo_visitor_data_item_2>Demo Visitor Data - Item #2</demo_visitor_data_item_2>
-                        </properties>
-                    </episerver.forms.samples.implementation.visitordata.demovisitordatasource>
-                </visitordatasources>
             </forms>
         </episerver>
         <contenttypes>
