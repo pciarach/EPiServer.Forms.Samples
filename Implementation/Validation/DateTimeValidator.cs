@@ -11,8 +11,8 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     /// </summary>
     public class DateTimeValidatorBase : ElementValidatorBase
     {
-        protected Injected<ServiceAccessor<LocalizationService>> _localization;
-        protected LocalizationService LocalizationService { get { return _localization.Service(); } }
+        private Injected<LocalizationService> _localizationService;
+        protected LocalizationService LocalizationService { get { return _localizationService.Service; } }
 
         /// <inheritdoc />
         public override bool? Validate(IElementValidatable targetElement)

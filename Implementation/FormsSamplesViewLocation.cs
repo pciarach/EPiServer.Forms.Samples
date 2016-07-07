@@ -1,12 +1,6 @@
-﻿using EPiServer.Forms.Core;
-using EPiServer.Forms.Helpers;
-using EPiServer.Forms.Implementation;
+﻿
+using EPiServer.Forms.EditView;
 using EPiServer.ServiceLocation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EPiServer.Forms.Samples.Implementation
 {

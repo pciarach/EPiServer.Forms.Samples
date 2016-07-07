@@ -4,6 +4,7 @@
 .commonIcons(@iconSize, @y: 1, @x: 0) {
     @posY: (@iconSize * @y);
     @posX: (@iconSize * @x);    
+
     background: url(images/formIcons16x16.png) -@posX + 0px -@posY + 0px no-repeat;
 }
 
@@ -14,6 +15,10 @@
 
         &.epi-forms-datetimeelementblock__icon {
             .commonIcons(@iconSize, 0, @x);
+        }
+
+        &.epi-forms-recaptchaelementblock__icon {
+            .commonIcons(@iconSize, 1, @x);
         }
     }
 }

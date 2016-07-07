@@ -1,6 +1,6 @@
 ﻿using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
-using EPiServer.Forms.Helpers;
+using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Personalization.VisitorGroups;
 using EPiServer.ServiceLocation;
 using EPiServer.Web.Mvc.VisitorGroups;
@@ -33,25 +33,6 @@ namespace EPiServer.Forms.Samples.Criteria
             // does not have any members that need to be deep copied
             return base.ShallowCopy();
         }
-    }
-
-    public class FormSelectionFactory : ISelectionFactory
-    {
-        private Injected<IFormRepository> _formRepository;
-
-        #region ISelectionFactory Members
-
-        public IEnumerable<SelectListItem> GetSelectListItems(Type property)
-        {
-            var formsInfo = _formRepository.Service.GetFormsInfo(null);
-            return formsInfo.Select(f => new SelectListItem()
-            {
-                Text = f.Name,
-                Value = f.FormGuid.ToString()
-            });
-        }
-
-        #endregion
     }
 
     public enum SubmissionStatus

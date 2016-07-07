@@ -1,22 +1,12 @@
-﻿using EPiServer.Core;
-using EPiServer.Forms.Configuration;
-using EPiServer.Forms.Controllers;
-using EPiServer.Forms.Core;
-using EPiServer.Forms.Core.ExternalFeed;
-using EPiServer.Forms.Helpers;
-using EPiServer.Forms.Implementation;
+﻿using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.Logging;
 using EPiServer.ServiceLocation;
 using EPiServer.Web.Hosting;
-using System;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Web;
 using System.Web.Hosting;
-using System.Web.Mvc;
-using System.Web.Routing;
 
 
 namespace EPiServer.Forms.Samples

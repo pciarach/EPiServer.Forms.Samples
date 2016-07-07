@@ -81,7 +81,15 @@
         Validators: {
             "EPiServer.Forms.Samples.Implementation.Validation.DateTimeValidator": dateTimeValidate,
             "EPiServer.Forms.Samples.Implementation.Validation.DateValidator": dateTimeValidate,
-            "EPiServer.Forms.Samples.Implementation.Validation.TimeValidator": dateTimeValidate
+            "EPiServer.Forms.Samples.Implementation.Validation.TimeValidator": dateTimeValidate,
+            "EPiServer.Forms.Samples.Implementation.Validation.RecaptchaValidator": function (fieldName, fieldValue, validatorMetaData) {
+                // validate recaptcha element
+                if (fieldValue) {
+                    return { isValid: true };
+                }
+
+                return { isValid: false, message: validatorMetaData.model.message };
+            }
         },
 
         /// BETA
@@ -210,6 +218,14 @@
                     }
 
                     return datetime;
+                } else if ($element.hasClass("FormRecaptcha")) {
+                    // for recaptcha element
+                    var widgetId = $element.data("epiforms-recaptcha-widgetid");
+                    if (widgetId != undefined && grecaptcha) {
+                        return grecaptcha.getResponse(widgetId);
+                    } else {
+                        return null;
+                    }
                 }
 
                 // if current element is not our job, let others process
@@ -243,5 +259,66 @@
                 dateFormat: dateFormat
             });
         });
+
+        $('.EPiServerForms .Form__CustomInput.FormDateTime__Input').on('keydown', function _onKeyDown(e) {
+            return _utilsSvc.showNextStepOnEnterKeyDown(e);
+        });
     }
+    
+    // reset reCAPTCH elements in target form
+    function resetRecaptchaElements(target) {
+
+        var reCaptchaElements = $(".FormRecaptcha", target);
+        $.each(reCaptchaElements, function (index, element) {
+            var widgetId = $(element).data("epiforms-recaptcha-widgetid");
+            if (widgetId != undefined && grecaptcha) {
+                grecaptcha.reset(widgetId);
+            }
+        });
+    };
+
+    $(".EPiServerForms").on("formsReset formsNavigationPrevStep", function(event) {
+        resetRecaptchaElements(event.target);
+    });
+
+    $(".EPiServerForms").on("formsStepValidating", function (event) {
+        if (event.isValid == true) {
+            return;
+        }
+        // reset reCAPTCHA element if validation failed
+        resetRecaptchaElements(event.target);
+    });
+
+
 })($$epiforms || $);
+
+
+function initRecaptchaElements() {
+    (function ($) {
+
+        //This is the callback function executed after Google authenticates recaptcha values.
+        function onVerify($element) {
+            return function () {
+                return function (response) {
+                    if (!response || response.length == 0) {
+                        return;
+                    };
+
+                    $element.find(".Form__Element__ValidationError").hide();
+                }
+            }($element);
+        };
+
+        $(".Form__Element.FormRecaptcha").each(function (index, element) {
+            var $element = $(element),
+                $widgetContainer = $(".g-recaptcha", $element),
+                siteKey = $element.data("epiforms-sitekey");
+
+            if ($widgetContainer.length == 1 && siteKey) {
+                var widgetId = grecaptcha.render($widgetContainer[0], { sitekey: siteKey, callback: onVerify($element) });
+                $element.data("epiforms-recaptcha-widgetid", widgetId);
+            }
+        });
+
+    })($$epiforms || $);
+}

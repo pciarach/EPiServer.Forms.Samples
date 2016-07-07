@@ -6,4 +6,7 @@ namespace EPiServer.Forms.Samples.EditView
 {
     [UIDescriptorRegistration]
     public class DateTimeElementBlockDescriptor : FormElementBlockDescriptor<DateTimeElementBlock> { }
+
+    [UIDescriptorRegistration]
+    public class RecaptchaElementBlockDescriptor : FormElementBlockDescriptor<RecaptchaElementBlock> { }
 }

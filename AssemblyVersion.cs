@@ -1,9 +1,5 @@
 using System.Reflection;
 
-[assembly: AssemblyCompany("EPiServer AB")]
-[assembly: AssemblyCopyright("© 2015 by EPiServer AB - All rights reserved")]
-[assembly: AssemblyTrademark("")]
-
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -15,5 +11,5 @@ using System.Reflection;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.2.9000")]
-[assembly: AssemblyFileVersion("1.0.2.9000")]
+[assembly: AssemblyVersion("3.0.0")]
+[assembly: AssemblyFileVersion("3.0.0")]

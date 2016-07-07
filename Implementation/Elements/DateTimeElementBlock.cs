@@ -1,9 +1,10 @@
 ﻿using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
-using EPiServer.Forms.Configuration;
 using EPiServer.Forms.Core;
-using EPiServer.Forms.Core.Models;
+using EPiServer.Forms.Core.Models.Internal;
+using EPiServer.Forms.EditView;
+using EPiServer.Forms.EditView.Models.Internal;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
 using EPiServer.Forms.Implementation.Validation;
 using EPiServer.Forms.Samples.EditView;
@@ -20,7 +21,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     /// <summary>
     /// DateTime element for EpiForm (support Visitor picking Time, Date, or both Date and Time)
     /// </summary>
-    [ContentType(GUID = "{3CC0755E-E50B-4AF4-92DF-C0F7625D526F}", GroupName = EPiServer.Forms.Constants.FormElementGroup, Order = 2230)]
+    [ContentType(GUID = "{3CC0755E-E50B-4AF4-92DF-C0F7625D526F}", GroupName = ConstantsFormsUI.FormElementGroup, Order = 2230)]
     public class DateTimeElementBlock : InputElementBlockBase, IElementCustomFormatValue
     {
         /// <summary>
@@ -67,7 +68,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 }
                 else
                 {
-                    return string.Concat(validators, Settings.Current.SelectorValueSeparator, pickerValidator);
+                    return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, pickerValidator);
                 }
             }
             set
@@ -129,11 +130,11 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         }
 
         /// <inheritdoc />
-        public override IElementInfo GetElementInfo()
+        public override ElementInfo GetElementInfo()
         {
             var baseInfo = base.GetElementInfo();
 
-            var dateTimeElementInfo = new DateTimeElementInfo 
+            var dateTimeElementInfo = new DateTimeElementInfo
             {
                 Type = baseInfo.Type,
                 FriendlyName = baseInfo.FriendlyName,
