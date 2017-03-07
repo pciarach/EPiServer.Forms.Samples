@@ -5,6 +5,12 @@ using EPiServer.Shell;
 namespace EPiServer.Forms.Samples.EditView
 {
     [UIDescriptorRegistration]
+    public class AddressesElementBlockDescriptor : FormElementBlockDescriptor<AddressesElementBlock> { }
+
+    [UIDescriptorRegistration]
+    public class DateTimeRangeElementBlockDescriptor : FormElementBlockDescriptor<DateTimeRangeElementBlock> { }
+
+    [UIDescriptorRegistration]
     public class DateTimeElementBlockDescriptor : FormElementBlockDescriptor<DateTimeElementBlock> { }
 
     [UIDescriptorRegistration]

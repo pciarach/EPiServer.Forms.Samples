@@ -2,9 +2,12 @@
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
+using EPiServer.Forms.Core.Internal;
 using EPiServer.Forms.Core.Models.Internal;
 using EPiServer.Forms.EditView;
+using EPiServer.Forms.EditView.DataAnnotations;
 using EPiServer.Forms.EditView.Models.Internal;
+using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
 using EPiServer.Forms.Implementation.Validation;
 using EPiServer.Forms.Samples.EditView;
@@ -13,6 +16,7 @@ using EPiServer.Forms.Samples.Implementation.Models;
 using EPiServer.Forms.Samples.Implementation.Validation;
 using EPiServer.Shell.ObjectEditing;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
@@ -22,31 +26,9 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     /// DateTime element for EpiForm (support Visitor picking Time, Date, or both Date and Time)
     /// </summary>
     [ContentType(GUID = "{3CC0755E-E50B-4AF4-92DF-C0F7625D526F}", GroupName = ConstantsFormsUI.FormElementGroup, Order = 2230)]
-    public class DateTimeElementBlock : InputElementBlockBase, IElementCustomFormatValue
+    [AvailableValidatorTypesAttribute(Include = new Type[] { typeof(RequiredValidator) })]
+    public class DateTimeElementBlock : InputElementBlockBase, IElementCustomFormatValue, IElementRequireClientResources
     {
-        /// <summary>
-        /// Email validator does not make sense for DateTime.
-        /// So we don't want these Validators available for this Element.
-        /// </summary>
-        [Ignore]    // CMS Shell, please don't show this property to Editor
-        public override Type[] ValidatorTypesToBeExcluded
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(EmailValidator),
-                    typeof(DateDDMMYYYYValidator),
-                    typeof(DateMMDDYYYYValidator),
-                    typeof(DateYYYYMMDDValidator),
-                    typeof(RegularExpressionValidator),
-                    typeof(IntegerValidator),
-                    typeof(PositiveIntegerValidator)
-                };
-            }
-            set { }
-        }
-
         [SelectOne(SelectionFactoryType = typeof(DateTimePickerTypeSelectionFactory))]
         [Display(GroupName = SystemTabNames.Content, Order = -6000)]
         public virtual int PickerType { get; set; }
@@ -143,6 +125,15 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             };
 
             return dateTimeElementInfo;
+        }
+
+        public IEnumerable<Tuple<string, string>> GetExtraResources()
+        {
+            var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
+            return new List<Tuple<string, string>>() {
+               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/datetimepicker.modified.js"),
+               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/DateTimeElementBlock.js")
+            };
         }
     }
 }

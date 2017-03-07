@@ -41,8 +41,10 @@ namespace EPiServer.Forms.Samples
             get
             {
                 return new Type[] 
-                { 
+                {
+                    typeof(AddressesElementBlock),
                     typeof(DateTimeElementBlock),
+                    typeof(DateTimeRangeElementBlock),
                     typeof(RecaptchaElementBlock)
                 };
             }

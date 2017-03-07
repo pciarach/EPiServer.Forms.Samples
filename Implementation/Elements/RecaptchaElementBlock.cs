@@ -2,10 +2,13 @@
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
+using EPiServer.Forms.Core.Internal;
 using EPiServer.Forms.EditView;
 using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
 using EPiServer.Forms.Samples.Implementation.Validation;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
@@ -16,7 +19,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     /// For get site key and secret key go to: https://www.google.com/recaptcha/admin#list and register your site.
     /// </summary>
     [ContentType(GUID = "{2D7E4A18-8F8B-4C98-9E81-D97524C62561}", GroupName = ConstantsFormsUI.FormElementGroup, Order = 2910)]
-    public class RecaptchaElementBlock : ValidatableElementBlockBase, IExcludeInSubmission, IViewModeInvisibleElement
+    public class RecaptchaElementBlock : ValidatableElementBlockBase, IExcludeInSubmission, IViewModeInvisibleElement, IElementRequireClientResources
     {
         #region IElementValidateable implement
 
@@ -95,6 +98,16 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                                         : string.Format("{0}: ({1})", base.EditViewFriendlyTitle, LocalizationService.GetString("/episerver/forms/samples/editview/requirejs"));
                 return friendlyTitle;
             }
+        }
+
+        public IEnumerable<Tuple<string, string>> GetExtraResources()
+        {
+            var currentPageLanguage = FormsExtensions.GetCurrentPageLanguage();
+            var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
+            return new List<Tuple<string, string>>() {
+                new Tuple<string, string>("script", string.Format("https://www.google.com/recaptcha/api.js?onload=initRecaptchaElements&render=explicit&hl={0}", currentPageLanguage)),
+                new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/RecaptchaElementBlock.js")
+            };
         }
     }
 }

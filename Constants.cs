@@ -12,5 +12,7 @@ namespace EPiServer.Forms.Samples
         /// "EPiServer.Forms.Samples"
         /// </summary>
         public const string ModuleName = "EPiServer.Forms.Samples";
+        public const int DefaultMapImageWidth = 300;
+        public const int DefaultMapImageHeight = 150;
     }
 }
