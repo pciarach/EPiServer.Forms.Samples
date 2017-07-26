@@ -5,36 +5,36 @@
             // pickerFormat will be used for jQuery datepicker validation,
             // while friendlyFormat will show in validation message for user.
             DateFormats: {
-                "en-US": {
+                "en-us": {
                     "pickerFormat": "mm/dd/yy",
                     "friendlyFormat": "MM/dd/yyyy"
                 },
-                "sv-SE": {
+                "sv-se": {
                     "pickerFormat": "yy-mm-dd",
                     "friendlyFormat": "yyyy-MM-dd"
                 },
-                "nb-NO": {
+                "nb-no": {
                     "pickerFormat": "dd.mm.yy",
                     "friendlyFormat": "dd.MM.yyyy"
                 },
-                "da-DK": {
+                "da-dk": {
                     "pickerFormat": "dd-mm-yy",
                     "friendlyFormat": "dd-MM-yyyy"
                 },
-                "de-DE": {
+                "de-de": {
                     "pickerFormat": "dd.mm.yy",
                     "friendlyFormat": "dd.MM.yyyy"
                 },
-                "nl-NL": {
+                "nl-nl": {
                     "pickerFormat": "d-m-yy",
                     "friendlyFormat": "d-M-yyyy"
                 },
-                "fi-FI": {
+                "fi-fi": {
                     "pickerFormat": "d.m.yy",
                     "friendlyFormat": "d.M.yyyy"
                 },
 
-                "fr-FR": {
+                "fr-fr": {
                     "pickerFormat": "dd/mm/yy",
                     "friendlyFormat": "dd/MM/yyyy"
                 }
@@ -51,9 +51,9 @@
             dateTimePicker: "datetimepicker"
         },
 
-        language = navigator.language || navigator.userLanguage,
-        dateFormatSettings = epi.EPiServer.Forms.Samples.DateFormats[language],
-        dateFormat = dateFormatSettings ? dateFormatSettings.pickerFormat : $.datetimepicker._defaults.dateFormat,
+        language = navigator.language || navigator.userLanguage, // on iOS naviagtor.language is in lower case (ex: en-us)
+        dateFormatSettings = epi.EPiServer.Forms.Samples.DateFormats[language.toLowerCase()] || epi.EPiServer.Forms.Samples.DateFormats["en-us"],
+        dateFormat = dateFormatSettings.pickerFormat,
 
 
         dateTimeValidate = function (fieldName, fieldValue, validatorMetaData) {
@@ -64,8 +64,8 @@
 
             if (typeof fieldValue === 'object' && fieldValue.isValid == false) {
 
-                var friendlyFormat = dateFormatSettings ? dateFormatSettings.friendlyFormat : $.datetimepicker._defaults.dateFormat,
-                    message = _utilsSvc.stringFormat(validatorMetaData.model.message, [friendlyFormat])
+                var friendlyFormat = dateFormatSettings.friendlyFormat,
+                    message = _utilsSvc.stringFormat(validatorMetaData.model.message, [friendlyFormat]);
 
                 return { isValid: false, message: message };
             }
@@ -421,7 +421,15 @@
             // OVERRIDE, custom binding data for date/time/datetime picker and date-time-range picker
             bindCustomElementValue: function ($element, val) {
                 if ($element.hasClass('FormDateTimeRange')) {
+                    // skip binding value for DateTimeRange when it has invalid value
+                    if (typeof val != "string") {
+                        return;
+                    }
                     var values = val.split('|');
+                    if (values && values.length < 2) {
+                        return;
+                    }
+
                     var $startEl = $element.find(".FormDateTimeRange__Start");
                     var $endEl = $element.find(".FormDateTimeRange__End");
                     var startPicker = $.datetimepicker._getInst($startEl[0]),
