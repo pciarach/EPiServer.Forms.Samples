@@ -80,7 +80,12 @@
         <ReplaceInFile File="$(MSBuildProjectDirectory)\EPiServer.Forms.Samples.nuspec"
                  Replace="{VersionString}=$(VersionStringSamples)"
                  TargetFile="$(SamplesNuSpecFile)" />
-
+        <!-- Copy xdt files-->
+        <Copy SourceFiles="$(MSBuildProjectDirectory)\web.config.install.xdt;
+					   $(MSBuildProjectDirectory)\web.config.uninstall.xdt;"
+              DestinationFolder="$(SamplesInstallerSourcePath)\Content\"
+              SkipUnchangedFiles="false" />
+        
         <!-- Do the actual nuget packaging -->
         <!--EPISERVER FORMS SAMPLES package-->
         <Exec Command="&quot;$(MSBuildNuGetExe)&quot; pack &quot;$(SamplesNuSpecFile)&quot; -BasePath &quot;$(SamplesInstallerSourcePath)&quot; -OutputDirectory &quot;$(OutDir)&quot;" />

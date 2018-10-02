@@ -11,11 +11,11 @@
     <description>Binary package of open sourced EPiServer Forms Samples, built from the latest stable release.</description>
     <copyright>Copyright EPiServer 2015 - 2017</copyright>
     <releaseNotes>
-      Bug fixes.
+        Datetime and Datetime Range will save data with format YYYY-MM-DDTHH:mmTZD(ISO-8601).
     </releaseNotes>    
     <tags>EPiServerModulePackage EPiServerAddon EPiServer Forms Samples</tags>
     <dependencies>
-      <dependency id="EPiServer.Forms" version="[4.3,5)" />
+      <dependency id="EPiServer.Forms" version="[4.9,5)" />
     </dependencies>
   </metadata>
 </package>

@@ -75,11 +75,11 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public virtual object GetFormattedValue()
         {
-            // NOTE: submittedValue is an string with format yyyy-MM-dd hh:mm:ss | yyyy-MM-dd hh:mm:ss or yyyy-MM-dd hh:mm:ss , yyyy-MM-dd hh:mm:ss
+            // NOTE: submittedValue is an string with format YYYY-MM-DDTHH:mmTZD(ISO-8601) | YYYY-MM-DDTHH:mmTZD(ISO-8601) or YYYY-MM-DDTHH:mmTZD(ISO-8601) , YYYY-MM-DDTHH:mmTZD(ISO-8601)
             // might need to transform to date only (yyyy/MM/dd | yyyy/MM/dd) or time only (hh:mm | hh:mm)
             var submittedValues = GetSubmittedValue() as string[];
 
-            if (submittedValues == null || submittedValues.All(value => string.IsNullOrWhiteSpace(value)))
+            if (submittedValues == null || submittedValues.All(string.IsNullOrWhiteSpace))
             {
                 return null;
             }
@@ -98,8 +98,6 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                             return dateTimeSegments[1];
                         case DateTimePickerType.DatePicker:
                             return dateTimeSegments[0];
-                        case DateTimePickerType.DateTimePicker:
-                            return string.Join(" ", dateTimeSegments);
                         default:
                             return valueString;
                     }
@@ -125,6 +123,18 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
 
         public override string GetDefaultValue()
         {
+            // get submitted value in non-js mode
+            var rawSubmittedData = HttpContext.Current.Request.Form;
+            var isJavaScriptSupport = rawSubmittedData.Get(EPiServer.Forms.Constants.FormWithJavaScriptSupport);
+            if (isJavaScriptSupport == null)
+            {
+                var rangeSegments = GetSubmittedValue() as string[];
+                if (rangeSegments != null)
+                {
+                    return rangeSegments.Select(ConvertToClientDateTime).ToStringWithSeparator("|");
+                }
+            }
+
             var defaultValue = PredefinedValue;
 
             var suggestedValues = GetAutofillValues();
@@ -137,19 +147,28 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 }
             }
 
-            // get submitted value in non-js mode
-            var rawSubmittedData = HttpContext.Current.Request.Form;
-            var isJavaScriptSupport = rawSubmittedData.Get(EPiServer.Forms.Constants.FormWithJavaScriptSupport);
-            if (isJavaScriptSupport == null)
+            return defaultValue?.Split('|', ',').Select(ConvertToClientDateTime).ToStringWithSeparator("|");
+        }
+        // datetime in server should have this format YYYY-MM-DDTHH:mmTZD(ISO-8601) | YYYY-MM-DDTHH:mmTZD(ISO-8601)
+        // might need to transform to date only(yyyy/MM/dd | yyyy/MM/dd) or time only(hh:mm | hh:mm)
+        protected virtual string ConvertToClientDateTime(string datetimeString)
+        {
+            DateTime dateTimeValue;
+            if (!DateTime.TryParse(datetimeString, out dateTimeValue))
             {
-                var rangeSegments = GetSubmittedValue() as string[];
-                if (rangeSegments != null)
-                {
-                    defaultValue = rangeSegments.ToStringWithSeparator("|");
-                }
+                return string.Empty;
             }
 
-            return defaultValue;
+            var pickerType = (DateTimePickerType)this.PickerType;
+            switch (pickerType)
+            {
+                case DateTimePickerType.TimePicker:
+                    return dateTimeValue.ToString("hh:mm tt");
+                case DateTimePickerType.DateTimePicker:
+                    return DateTimeOffset.Parse(datetimeString).ToString("yyyy-MM-dd hh:mm tt"); //ignore offset
+                default:
+                    return datetimeString;
+            }
         }
 
         public IEnumerable<Tuple<string, string>> GetExtraResources()

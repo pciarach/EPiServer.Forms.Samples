@@ -82,8 +82,8 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public virtual object GetFormattedValue()
         {
-            // NOTE: submittedValue always is yyyy-MM-dd hh:mm:ss, might need to transform to date only (yyyy/MM/dd) or time only (hh:mm)
-            
+            // NOTE: submittedValue is YYYY-MM-DDTHH:mmTZD(ISO-8601), might need to transform to date only (yyyy/MM/dd) or time only (hh:mm)
+
             var submittedValue = this.GetSubmittedValue();
             if (submittedValue == null)
             {
@@ -104,8 +104,6 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                     return dateTimeSegments[1];
                 case DateTimePickerType.DatePicker:
                     return dateTimeSegments[0];
-                case DateTimePickerType.DateTimePicker:
-                    return string.Join(" ", dateTimeSegments);
                 default:
                     return valueString;
             }
@@ -137,12 +135,12 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         }
 
         /// <summary>
-        /// convert datetime string with format [yyyy-MM-dd hh:mm:ss] -> [yyyy-MM-dd hh:mm tt] OR [hh:mm:ss] -> [hh:mm tt]
+        /// convert datetime string with format YYYY-MM-DDTHH:mmTZD(ISO-8601) -> [yyyy-MM-dd hh:mm tt] OR [hh:mm:ss] -> [hh:mm tt]
         /// </summary>
         /// <returns></returns>
         public override string GetDefaultValue()
         {
-            var result = base.GetDefaultValue();// datetime string with format [YYYY-MM-DD hh:mm:ss] OR [YYYY-MM-DD] OR [hh:mm:ss]
+            var result = base.GetDefaultValue();// datetime string with format [YYYY-MM-DDTHH:mmTZD](ISO-8601) OR [YYYY-MM-DD] OR [hh:mm:ss]
 
             if (!string.IsNullOrEmpty(this.GetErrorMessage()))
             {
@@ -161,7 +159,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 case DateTimePickerType.TimePicker:
                     return dateTimeValue.ToString("hh:mm tt");
                 case DateTimePickerType.DateTimePicker:
-                    return dateTimeValue.ToString("yyyy-MM-dd hh:mm tt");
+                    return DateTimeOffset.Parse(result).ToString("yyyy-MM-dd hh:mm tt"); //ignore offset
                 default:
                     return result;
             }

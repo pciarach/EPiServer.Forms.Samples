@@ -127,6 +127,12 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             return submittedValue;
         }
 
+        public virtual AddressInfo GetDefaultAddressInfo()
+        {
+            var defaultValue = GetDefaultValue();
+            return defaultValue?.ToObject<AddressInfo>() ?? new AddressInfo();
+        }
+
         public override string GetDefaultValue()
         {
             var defaultValue = PredefinedValue;
