@@ -23,12 +23,20 @@ Guide to build is put in https://github.com/episerver/EPiServer.Forms.Samples/bl
 
 Release note
 -------------
+v3.5.0
+- DateTime element now saves data in ISO-8601 format.
+- bugfixes.
+
+v3.4.1
+- bugfixes.
+
+v3.4.0
+- compatible with CMS11.
 
 v3.3.1
- - bugfixes
+ - bugfixes.
 
 v3.3.0
-
 - EPiServerForm 4.3 improves the way resources (scripts, CSS) are loaded. If a form element needs its own resource, it must implement the IElementRequireClientResources interface. 
 - The Forms element resources are loaded after Forms and external resources. 
 - For example, the DateTime element requires jquery daytime to work but it is not loaded until the element is dragged into the form.
