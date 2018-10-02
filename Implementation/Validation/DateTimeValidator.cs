@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 namespace EPiServer.Forms.Samples.Implementation.Validation
 {
     /// <summary>
-    ///     validate date time string in format "2015-12-25 10:30 AM"
+    ///     validate date time string in format YYYY-MM-DDTHH:mmTZD(ISO-8601)
     /// </summary>
     public class DateTimeValidatorBase : ElementValidatorBase
     {
@@ -69,6 +69,8 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
         /// <inheritdoc />
         public override bool? Validate(IElementValidatable targetElement)
         {
+            // DateTime format: YYYY-MM-DDTHH:mmTZD(ISO-8601) "2018-01-01T14:06+07:00|2018-02-02T14:06+07:00"
+
             var submittedValues = (targetElement.GetSubmittedValue() as string[]);
             // if the value is null, then let the RequiredValidator do the work
             if (submittedValues == null)
@@ -92,13 +94,6 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
             var pickerType = (datetimeRangeBlock != null) ? (DateTimePickerType)datetimeRangeBlock.PickerType : DateTimePickerType.DateTimePicker;
             switch (pickerType)
             {
-                case DateTimePickerType.TimePicker:
-                    var timeRegex = "^(0?[1-9]|1[012])(:[0-5]\\d) [APap][mM]$";
-                    if (!Regex.IsMatch(submittedValues[0].Replace("1900-01-01 ", string.Empty), timeRegex) || !Regex.IsMatch(submittedValues[1].Replace("1900-01-01 ", string.Empty), timeRegex))
-                    {
-                        return false;
-                    }
-                    break;
                 case DateTimePickerType.DatePicker:
                     return endDateTime.Subtract(startDateTime).TotalDays > 0;
             }
@@ -136,6 +131,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     {
         public override bool? Validate(IElementValidatable targetElement)
         {
+            // DateTime format: YYYY-MM-DDTHH:mmTZD(ISO-8601) "2018-01-01T14:06+07:00"
             var submittedValue = targetElement.GetSubmittedValue() as string;
             if (string.IsNullOrEmpty(submittedValue))
             {
@@ -148,10 +144,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
                 return false;
             }
 
-            var timeRegex = "^(0?[1-9]|1[012])(:[0-5]\\d) [APap][mM]$";
-
-            // when have JS a fake date "1900-01-01 " will be added to submitted value
-            return Regex.IsMatch(submittedValue.Replace("1900-01-01 ", string.Empty), timeRegex);
+            return true;
         }
     }
 }
