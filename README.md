@@ -23,6 +23,10 @@ Guide to build is put in https://github.com/episerver/EPiServer.Forms.Samples/bl
 
 Release note
 -------------
+v3.6.0
+- Improve Form Sample elements to fulfill the WCAG 2.0 level AA compliance.
+- Bugfixes.
+
 v3.5.0
 - DateTime element now saves data in ISO-8601 format.
 - bugfixes.

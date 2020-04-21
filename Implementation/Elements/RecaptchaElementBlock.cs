@@ -7,9 +7,11 @@ using EPiServer.Forms.EditView;
 using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
 using EPiServer.Forms.Samples.Implementation.Validation;
+using EPiServer.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Web;
 
 namespace EPiServer.Forms.Samples.Implementation.Elements
@@ -21,6 +23,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     [ContentType(GUID = "{2D7E4A18-8F8B-4C98-9E81-D97524C62561}", GroupName = ConstantsFormsUI.FormElementGroup, Order = 2910)]
     public class RecaptchaElementBlock : ValidatableElementBlockBase, IExcludeInSubmission, IViewModeInvisibleElement, IElementRequireClientResources
     {
+        private static readonly ILogger _logger = LogManager.GetLogger(typeof(RecaptchaElementBlock));
         #region IElementValidateable implement
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             {
                 var captchaValidator = typeof(RecaptchaValidator).FullName;
                 var validators = this.GetPropertyValue(content => content.Validators);
-                if (string.IsNullOrEmpty(validators))
+                if (string.IsNullOrWhiteSpace(validators))
                 {
                     return captchaValidator;
                 }
@@ -77,23 +80,64 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// The site key for ReCAPTCHA element.
         /// </summary>
         [Display(GroupName = SystemTabNames.Content, Order = -3500)]
-        public virtual string SiteKey { get; set; }
+        public virtual string SiteKey
+        {
+            get
+            {
+                var siteKey = this.GetPropertyValue(content => content.SiteKey);
+                if (string.IsNullOrWhiteSpace(siteKey))
+                {
+                    try
+                    {
+                        siteKey = ConfigurationManager.AppSettings["RecaptchaSiteKey"];
+                    }
+                    catch (ConfigurationErrorsException ex)
+                    {
+                        _logger.Warning("Cannot get RecaptchaSiteKey from app settings. ", ex);
+                    }
+                }
+                return siteKey;
+            }
+            set
+            {
+                this.SetPropertyValue(content => content.SiteKey, value);
+            }
+        }
 
         /// <summary>
         /// The shared key between site and ReCAPTCHA.
         /// </summary>
         [Display(GroupName = SystemTabNames.Content, Order = -3400)]
-        public virtual string SecretKey { get; set; }
+        public virtual string SecretKey
+        {
+            get
+            {
+                var secretKey = this.GetPropertyValue(content => content.SecretKey);
+                if (string.IsNullOrWhiteSpace(secretKey))
+                {
+                    try
+                    {
+                        secretKey = ConfigurationManager.AppSettings["RecaptchaSecretKey"];
+                    }
+                    catch (ConfigurationErrorsException ex)
+                    {
+                        _logger.Warning("Cannot get RecaptchaSecretKey from app settings. ", ex);
+                    }
+                }
+                return secretKey;
+            }
+            set
+            {
+                this.SetPropertyValue(content => content.SecretKey, value);
+            }
+        }
 
         /// <inheritdoc />
         public override string EditViewFriendlyTitle
         {
             get
             {
-                var siteKey = this.GetPropertyValue(content => content.SiteKey);
-                var secret = this.GetPropertyValue(content => content.SecretKey);
-
-                var friendlyTitle = string.IsNullOrEmpty(siteKey) || string.IsNullOrEmpty(secret) ?
+                var friendlyTitle = string.IsNullOrWhiteSpace(SiteKey) || string.IsNullOrWhiteSpace(SecretKey) ?
                                         string.Format("{0}: ({1})", base.EditViewFriendlyTitle, LocalizationService.GetString("/episerver/forms/editview/notconfigured"))
                                         : string.Format("{0}: ({1})", base.EditViewFriendlyTitle, LocalizationService.GetString("/episerver/forms/samples/editview/requirejs"));
                 return friendlyTitle;

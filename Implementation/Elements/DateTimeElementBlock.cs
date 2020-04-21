@@ -91,12 +91,13 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             }
 
             var valueString = submittedValue.ToString();
-            DateTime dateTimeValue;
-            if (!DateTime.TryParse(valueString, out dateTimeValue))
+            DateTimeOffset dateTimeOffsetValue;
+            if (!DateTimeOffset.TryParse(valueString, out dateTimeOffsetValue))
             {
                 return valueString;
             }
-            var dateTimeSegments = dateTimeValue.ToString("s", CultureInfo.InvariantCulture).Split(new char[] { 'T' }, StringSplitOptions.RemoveEmptyEntries);
+            var dateTimeSegments = dateTimeOffsetValue.DateTime.ToString("s", CultureInfo.InvariantCulture).Split(new char[] { 'T' }, StringSplitOptions.RemoveEmptyEntries);
+
             var pickerType = (DateTimePickerType)this.PickerType;
             switch (pickerType)
             {

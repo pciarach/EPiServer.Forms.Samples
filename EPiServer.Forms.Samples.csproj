@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -193,6 +193,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="ClientResources\ViewMode\datetimepicker.modified.js" />
     <Content Include="ClientResources\ViewMode\RecaptchaElementBlock.js" />
+    <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN - new.xml" />
     <Content Include="MSBuild\dotless.Compiler.exe" />
     <Content Include="MSBuild\EPiServer.Build.Tasks.dll" />
     <Content Include="MSBuild\MsbuildCmd.GetVersionString.js" />
@@ -204,7 +205,7 @@
     <Content Include="Views\ElementBlocks\DateTimeElementBlock.ascx" />
     <Content Include="Views\ElementBlocks\RecaptchaElementBlock.ascx" />
     <Content Include="Views\Shared\EditorTemplates\FormModel.ascx" />
-    <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN.xml"/>
+    <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_EN.xml" />
     <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_DA.xml" />
     <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_DE.xml" />
     <EmbeddedResource Include="EmbeddedLangFiles\EPiServer.Forms.Samples_ES.xml" />
