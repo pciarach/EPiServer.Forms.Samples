@@ -18,29 +18,31 @@ This package contains extra Form Elements, which required more dependency on com
 We will push code here after every release.
 From 2017, we only maintain the source-code here without building the package.
 
-Guide to build is put in https://github.com/episerver/EPiServer.Forms.Samples/blob/master/MSBuild/README.md
+
+Creating nuget packages in local
+-------------
+
+To set up a development environment, run:
+
+```
+build.cmd
+```
+then run
+```
+pack.cmd
+```
+
+This task will create nuget packages then put them into nupkgs folder
 
 
 Release note
 -------------
-v3.6.0
-- Improve Form Sample elements to fulfill the WCAG 2.0 level AA compliance.
-- Bugfixes.
-
-v3.5.0
-- DateTime element now saves data in ISO-8601 format.
-- bugfixes.
-
-v3.4.1
-- bugfixes.
-
-v3.4.0
-- compatible with CMS11.
 
 v3.3.1
- - bugfixes.
+ - bugfixes
 
 v3.3.0
+
 - EPiServerForm 4.3 improves the way resources (scripts, CSS) are loaded. If a form element needs its own resource, it must implement the IElementRequireClientResources interface. 
 - The Forms element resources are loaded after Forms and external resources. 
 - For example, the DateTime element requires jquery daytime to work but it is not loaded until the element is dragged into the form.

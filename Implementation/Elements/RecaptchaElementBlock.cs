@@ -24,6 +24,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     public class RecaptchaElementBlock : ValidatableElementBlockBase, IExcludeInSubmission, IViewModeInvisibleElement, IElementRequireClientResources
     {
         private static readonly ILogger _logger = LogManager.GetLogger(typeof(RecaptchaElementBlock));
+
         #region IElementValidateable implement
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 }
                 else
                 {
-                    return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, captchaValidator);
+                    return string.Concat(validators, Forms.Constants.RecordSeparator, captchaValidator);
                 }
             }
             set
@@ -132,6 +133,24 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             }
         }
 
+        /// <summary>
+        /// The score threshold of reCaptcha.
+        /// </summary>
+        [Display(GroupName = SystemTabNames.Content, Order = -3600) ]
+        [Range(Constants.MinimumRecaptchaScoreThreshold, Constants.MaximumRecaptchaScoreThreshold)]
+        [Required]
+        public virtual double ScoreThreshold
+        {
+            get; set;
+        }
+
+        /// <inheritdoc />
+        public override void SetDefaultValues(ContentType contentType)
+        {
+            base.SetDefaultValues(contentType);
+            ScoreThreshold = Constants.DefaultRecaptchaScoreThreshold;
+        }
+
         /// <inheritdoc />
         public override string EditViewFriendlyTitle
         {
@@ -146,11 +165,8 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
 
         public IEnumerable<Tuple<string, string>> GetExtraResources()
         {
-            var currentPageLanguage = FormsExtensions.GetCurrentPageLanguage();
-            var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
             return new List<Tuple<string, string>>() {
-                new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/RecaptchaElementBlock.js"),
-                new Tuple<string, string>("script", string.Format("https://www.google.com/recaptcha/api.js?onload=initRecaptchaElements&render=explicit&hl={0}", currentPageLanguage))
+                new Tuple<string, string>("script", string.Format("https://www.google.com/recaptcha/api.js?render={0}", SiteKey))
             };
         }
     }

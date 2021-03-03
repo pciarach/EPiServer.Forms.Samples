@@ -18,7 +18,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
         {
             // NOTE: when run in none-js mode, the recaptcha element value will be null and validation failed.
             var submittedValue = targetElement.GetSubmittedValue() as string;
-            if (string.IsNullOrEmpty(submittedValue))
+            if (string.IsNullOrWhiteSpace(submittedValue))
             {
                 return false;
             }
@@ -36,7 +36,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
             var responseString = client.DownloadString(verifyUrl);
             var result = responseString.ToObject<RecaptchaResponse>();
 
-            return result.success;
+            return result.success && result.score >= recaptchaElment.ScoreThreshold;
         }
     }
 
@@ -45,8 +45,24 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     /// </summary>
     public class RecaptchaResponse
     {
+        /// <summary>
+        /// Whether this request was a valid reCAPTCHA token for your site.
+        /// </summary>
         public bool success { get; set; }
+
+        /// <summary>
+        /// Timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ).
+        /// </summary>
         public DateTime challenge_ts { get; set; }
+
+        /// <summary>
+        /// The hostname of the site where the reCAPTCHA was solved.
+        /// </summary>
         public string hostname { get; set; }
+
+        /// <summary>
+        /// The score for this request (0.0 - 1.0).
+        /// </summary>
+        public double score { get; set; }
     }
 }

@@ -1,0 +1,15 @@
+"use strict";
+const gulp = require("gulp"),
+    BuildHelper = require("./build/buildHelper");
+
+// get build options from command line arguments
+let buildHelper = new BuildHelper();
+
+// Import all build tasks
+require("./build/tasks/set-version")(process.argv);
+require("./build/tasks/nuget")(buildHelper);
+require("./build/tasks/build")(buildHelper);
+require("./build/tasks/less")();
+
+gulp.task("build", gulp.parallel("less:compile", "copy-clientresources", "copy-langfiles", "copy-views", "create-moduleconfig"));
+gulp.task("pack", gulp.series("clean", "build", "nuget:Forms.Samples"));

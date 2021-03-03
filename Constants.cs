@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EPiServer.Forms.Samples
+﻿namespace EPiServer.Forms.Samples
 {
     public class Constants
     {
@@ -14,5 +8,20 @@ namespace EPiServer.Forms.Samples
         public const string ModuleName = "EPiServer.Forms.Samples";
         public const int DefaultMapImageWidth = 300;
         public const int DefaultMapImageHeight = 150;
+
+        /// <summary>
+        /// Default score threshold of reCaptcha.
+        /// </summary>
+        public const double DefaultRecaptchaScoreThreshold = 0.5;
+
+        /// <summary>
+        /// Minimum score threshold of reCaptcha.
+        /// </summary>
+        public const double MinimumRecaptchaScoreThreshold = 0;
+
+        /// <summary>
+        /// Maximum score threshold of reCaptcha.
+        /// </summary>
+        public const double MaximumRecaptchaScoreThreshold = 1;
     }
 }
