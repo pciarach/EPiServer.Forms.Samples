@@ -1,4 +1,5 @@
 ﻿using EPiServer.DataAnnotations;
+using EPiServer.Forms.Samples.Criteria.SelectionFactory;
 using EPiServer.Personalization.VisitorGroups;
 using EPiServer.Web.Mvc.VisitorGroups;
 using System;
@@ -19,24 +20,24 @@ namespace EPiServer.Forms.Samples.Criteria
         public override EPiServer.Data.Identity Id { get; set; }
 
         [Required]
-        [DojoWidget(SelectionFactoryType = typeof(FormSelectionFactory), LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/selectedform", AdditionalOptions = "{ selectOnClick: true }")]
+        [CriterionPropertyEditor(SelectionFactoryType = typeof(FormSelectionFactory), LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/selectedform", AdditionalPropsJson = "{ \"selectOnClick\": \"true\" }")]
         public string SelectedForm { get; set; }
 
         [Required]
-        [DojoWidget(WidgetType = "dijit.form.FilteringSelect", LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/selectedfield", AdditionalOptions = "{ selectOnClick: true }")]
+        [CriterionPropertyEditor(LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/selectedfield", AdditionalPropsJson = "{ \"selectOnClick\": \"true\" }")]
         public string SelectedField { get; set; }
 
-        [DojoWidget(
+        [CriterionPropertyEditor(
             LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/condition",
             SelectionFactoryType = typeof(EnumSelectionFactory),
-            AdditionalOptions = "{ selectOnClick: true }"),
+            AdditionalPropsJson = "{ \"selectOnClick\": \"true\" }"),
             Required]
         public FieldValueCompareCondition Condition { get; set; }
 
         /// <summary>
         /// Gets or sets the value to be used for comparisons
         /// </summary>
-        [DojoWidget(LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/value")]
+        [CriterionPropertyEditor(LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/value")]
         public string Value { get; set; }
 
         public override ICriterionModel Copy()

@@ -18,8 +18,13 @@ namespace EPiServer.Forms.Samples.Implementation
         {
             get
             {
-                return new string[] { GetDefaultViewLocation() };
+                return new string[] { GetDefaultViewFormsSampleLocation() };
             }
+        }
+
+        public string GetDefaultViewFormsSampleLocation()
+        {
+            return "Views/ElementBlocks";
         }
     }
 }

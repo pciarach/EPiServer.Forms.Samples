@@ -37,11 +37,10 @@ const compileLess = (lessResources, done) => {
 
 const tasks = () => {
 
-    const formSamplesLessResources = ["ClientResources/**/*.less"];
-    
+    const formSamplesLessResources = ["src/EPiServer.Forms.Samples/ClientResources/**/*.less"];
+
     //  Compile less file of Forms.Samples project to css format
     gulp.task("less:compile", (done) => compileLess(formSamplesLessResources, done));
 };
 
 module.exports = tasks;
-

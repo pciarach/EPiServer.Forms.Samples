@@ -19,6 +19,9 @@ REM Build javascript and less files
 CALL npm run build
 IF %errorlevel% NEQ 0 EXIT /B %errorlevel%
 
+REM Build react views
+CALL npm run webpack
+
 REM Build the C# solution.
 dotnet build -c %CONFIGURATION%
 IF %errorlevel% NEQ 0 EXIT /B %errorlevel%

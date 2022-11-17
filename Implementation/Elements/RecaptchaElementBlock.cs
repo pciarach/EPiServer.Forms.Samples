@@ -6,8 +6,13 @@ using EPiServer.Forms.Core.Internal;
 using EPiServer.Forms.EditView;
 using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
+using EPiServer.Forms.Samples.Configuration;
+using EPiServer.Forms.Samples.Implementation.Models;
 using EPiServer.Forms.Samples.Implementation.Validation;
 using EPiServer.Logging;
+using EPiServer.ServiceLocation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,6 +29,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     public class RecaptchaElementBlock : ValidatableElementBlockBase, IExcludeInSubmission, IViewModeInvisibleElement, IElementRequireClientResources
     {
         private static readonly ILogger _logger = LogManager.GetLogger(typeof(RecaptchaElementBlock));
+        private Injected<IFormSamplesConfiguration> _config;
 
         #region IElementValidateable implement
 
@@ -57,8 +63,15 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public override object GetSubmittedValue()
         {
-            var submitData = HttpContext.Current.Request.HttpMethod == "POST" ? HttpContext.Current.Request.Form : HttpContext.Current.Request.QueryString;
-            return submitData[this.Content.GetElementName()];
+            var httpContext = ServiceLocator.Current.GetInstance<IHttpContextAccessor>();
+            if(httpContext.HttpContext.Request.Method == "POST")
+            {
+                return httpContext.HttpContext.Request.Form[this.Content.GetElementName()];
+            }
+            else
+            {
+                return httpContext.HttpContext.Request.Query[this.Content.GetElementName()];
+            }
         }
 
         #endregion
@@ -90,11 +103,11 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 {
                     try
                     {
-                        siteKey = ConfigurationManager.AppSettings["RecaptchaSiteKey"];
+                        siteKey = _config.Service.SiteKey;
                     }
                     catch (ConfigurationErrorsException ex)
                     {
-                        _logger.Warning("Cannot get RecaptchaSiteKey from app settings. ", ex);
+                        _logger.Warning("Cannot get RecaptchaSiteKey from app settings.", ex);
                     }
                 }
                 return siteKey;
@@ -118,11 +131,11 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 {
                     try
                     {
-                        secretKey = ConfigurationManager.AppSettings["RecaptchaSecretKey"];
+                        secretKey = _config.Service.SecretKey;
                     }
                     catch (ConfigurationErrorsException ex)
                     {
-                        _logger.Warning("Cannot get RecaptchaSecretKey from app settings. ", ex);
+                        _logger.Warning("Cannot get RecaptchaSecretKey from app settings.", ex);
                     }
                 }
                 return secretKey;

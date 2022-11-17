@@ -1,28 +1,55 @@
-﻿using EPiServer.Forms.Helpers.Internal;
+using EPiServer.Forms.Helpers.Internal;
+using EPiServer.Forms.Samples.Business;
+using EPiServer.Forms.Samples.Configuration;
+using EPiServer.Forms.Samples.Implementation.Models;
+using EPiServer.Forms.Samples.Implementation.Validation;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.Logging;
 using EPiServer.ServiceLocation;
+using EPiServer.Shell.Modules;
+using EPiServer.Shell.Web.Internal;
 using EPiServer.Web.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
-using System.Web.Hosting;
 
 
 namespace EPiServer.Forms.Samples
 {
     [InitializableModule]
     [ModuleDependency(typeof(EPiServer.Web.InitializationModule), typeof(EPiServer.Shell.ShellInitialization), typeof(EPiServer.Forms.InitializationModule))]
-    public partial class InitializationModule : IConfigurableModule, IInitializableHttpModule
+    public partial class InitializationModule : IConfigurableModule
     {
-        private static object _lock = new object();
-        private static readonly ILogger _logger = LogManager.GetLogger(typeof(InitializationModule));
-
         /// <summary>
         /// Configure the container for this module
         /// </summary>
         /// <param name="context">The EPiServer context</param>
-        public void ConfigureContainer(ServiceConfigurationContext serviceConfigurationContext) { }
+        public void ConfigureContainer(ServiceConfigurationContext serviceConfigurationContext)
+        {
+            var serviceProvider = serviceConfigurationContext.Services.BuildServiceProvider();
+
+            serviceConfigurationContext.Services.AddStartupFilter<FormsSamplePublicStaticFileStartupFilter>();
+            serviceConfigurationContext.Services.AddSingleton<IFormSamplesConfiguration, FormSamplesConfiguration>();
+            serviceConfigurationContext.Services.AddHttpContextAccessor();
+            serviceConfigurationContext.Services.AddEmbeddedLocalization<InitializationModule>();
+            serviceConfigurationContext.Services.AddHttpClient();
+            serviceConfigurationContext.Services.Configure<ProtectedModuleOptions>(options =>
+            {
+                if (!options.Items.Any(x => x.Name.Equals("EPiServer.Forms.Samples")))
+                {
+                    var module = new ModuleDetails
+                    {
+                        Name = "EPiServer.Forms.Samples",
+
+                    };
+                    options.Items.Add(module);
+                }
+            });
+        }
 
         /// <summary>
         /// Initialize this module
@@ -30,15 +57,7 @@ namespace EPiServer.Forms.Samples
         /// <param name="context">The EPiServer initialization context</param>
         public void Initialize(InitializationEngine context)
         {
-            _logger.Information("Initialize EPiServer Forms Samples");
-            AddVppForPublicFolderInsideThisAddOn();
         }
-
-        /// <summary>
-        /// Initializes HTTP events such as attaching HTTP modules to events
-        /// </summary>
-        /// <param name="application">The application context</param>
-        public void InitializeHttpEvents(HttpApplication application) { }
 
         /// <summary>
         /// Preloads for this module (not used)
@@ -50,25 +69,8 @@ namespace EPiServer.Forms.Samples
         /// Uninitialize this module
         /// </summary>
         /// <param name="context">The EPiServer initialization context</param>
-        public void Uninitialize(global::EPiServer.Framework.Initialization.InitializationEngine context)
+        public void Uninitialize(InitializationEngine context)
         {
-        }
-
-        /// <summary>
-        /// add a new VPP folders to point to this own plugin folders, 
-        /// so we don't need to modify the EPiServerFramework.config
-        /// <remarks>This is protected AddOn, so public end user cannot access its files under /se/EPiServer.Forms.Samples/ClientResources, ... </remarks>
-        /// </summary>
-        private void AddVppForPublicFolderInsideThisAddOn()
-        {
-            // TECHNOTE: allow access to protected module's client resources
-            // because anonymous user views Forms's Elements in ViewMode, we need to provide them .js file inside the addon (protected) folder
-            var publicVpp = new NameValueCollection();
-            publicVpp.Add("virtualPath", "~" + ModuleHelper.GetPublicVirtualPath(Constants.ModuleName) + "/ClientResources/ViewMode");
-            publicVpp.Add("physicalPath", ModuleHelper.ToPhysicalVPPClientResource(this.GetType(), @"ClientResources\ViewMode"));
-            publicVpp.Add("bypassAccessCheck", "true");
-            HostingEnvironment.RegisterVirtualPathProvider(new VirtualPathNonUnifiedProvider("PublicEPiServerFormsClientResourcesVpp", publicVpp));
-            _logger.Information("Create VPP for EPiServer.Forms.Samples {0} ==> {1}", publicVpp["virtualPath"], publicVpp["physicalPath"]);
         }
     }
 }

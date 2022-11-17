@@ -1,4 +1,4 @@
-﻿using EPiServer.Forms.Helpers.Internal;
+using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Configuration;
 using EPiServer.Forms.Implementation;
 using EPiServer.ServiceLocation;
@@ -21,13 +21,13 @@ namespace EPiServer.Forms.Samples
 
                 var arrRes = new List<Tuple<string, string>>();
                 
-                arrRes.Add(new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/jquery-ui.modified.js"));
-                arrRes.Add(new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/EPiServerFormsSamples.js"));
+                arrRes.Add(new Tuple<string, string>("script", publicVirtualPath + "/jquery-ui/jquery-ui.js"));
+                arrRes.Add(new Tuple<string, string>("script", publicVirtualPath + "/js/EPiServerFormsSamples.js"));
                 
-                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/ClientResources/ViewMode/EPiServerFormsSamples.css"));
-                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/ClientResources/ViewMode/jquery-ui.min.css"));
-                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/ClientResources/ViewMode/jquery-ui.structure.min.css"));
-                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/ClientResources/ViewMode/jquery-ui.theme.min.css"));
+                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/css/EPiServerFormsSamples.css"));
+                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/jquery-ui/jquery-ui.css"));
+                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/jquery-ui/jquery-ui.structure.css"));
+                arrRes.Add(new Tuple<string, string>("css", publicVirtualPath + "/jquery-ui/jquery-ui.theme.css"));
 
                 return arrRes;
             }

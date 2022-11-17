@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <ItemGroup>
+        <ZipFile Include="$(MSBuildThisFileDirectory)..\..\contentFiles\any\any\modules\_protected\**\*.zip"/>
+		<ModuleConfigFile Include="$(MSBuildThisFileDirectory)..\..\contentFiles\any\any\modules\_protected\**\module.config"/>
+    </ItemGroup>
+
+    <Target Name="CopyModuleFilesFormsSamples" BeforeTargets="Build">
+        <Copy
+            SourceFiles="@(ZipFile)"
+            DestinationFolder="$(MSBuildProjectDirectory)\modules\_protected\%(RecursiveDir)"
+        />
+		<Copy
+            SourceFiles="@(ModuleConfigFile)"
+            DestinationFolder="$(MSBuildProjectDirectory)\modules\_protected\%(RecursiveDir)"
+			Condition="!Exists('$(MSBuildProjectDirectory)\modules\_protected\%(RecursiveDir)\module.config')"
+        />
+    </Target>
+</Project>
