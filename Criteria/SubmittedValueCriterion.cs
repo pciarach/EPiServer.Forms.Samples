@@ -1,30 +1,23 @@
 ﻿using EPiServer.Core;
-using EPiServer.Data.Dynamic;
-using EPiServer.DataAnnotations;
-using EPiServer.Forms.Core;
 using EPiServer.Forms.Core.Data;
 using EPiServer.Forms.Core.Models;
-using EPiServer.Forms.Helpers;
 using EPiServer.Forms.Implementation.Elements;
 using EPiServer.Personalization.VisitorGroups;
 using EPiServer.ServiceLocation;
-using EPiServer.Web.Mvc.VisitorGroups;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using EPiServer.Forms.Core.Internal;
+using Microsoft.AspNetCore.Http;
+
 namespace EPiServer.Forms.Samples.Criteria
 {
     [VisitorGroupCriterion(
         Category = "EPiServer Forms",
         DisplayName = "Submitted Value Form",
-        LanguagePath = "/episerver/forms/samples/criteria/submittedvaluecriterion", 
-        ScriptUrl = "ClientResources/Criteria/SubmittedValue.js")]
+        LanguagePath = "/episerver/forms/samples/criteria/submittedvaluecriterion",
+        ScriptShellModuleName = "EPiServer.Forms.Samples",
+        ScriptUrl = "ClientResources/Criteria/dist/index.js")]
     public class SubmittedValueCriterion : CriterionBase<SubmittedValueModel>
     {
         private Injected<IFormDataRepository> _formDataRepository;
@@ -34,7 +27,7 @@ namespace EPiServer.Forms.Samples.Criteria
         /// <summary>
         /// Determines whether current user already submitted a value to the form.
         /// </summary>
-        public override bool IsMatch(IPrincipal principal, HttpContextBase httpContext)
+        public override bool IsMatch(IPrincipal principal, HttpContext httpContext)
         {
             if (Model == null || Model.SelectedForm == null || Model.SelectedField == null)
             {
@@ -62,13 +55,12 @@ namespace EPiServer.Forms.Samples.Criteria
                 return false;
             }
 
-            var submittedValue = string.Empty;
             if (!post.Data.ContainsKey(Model.SelectedField) || post.Data[Model.SelectedField] == null)
             {
-                return false;      
+                return false;
             }
-            
-            submittedValue = post.Data[Model.SelectedField].ToString();
+
+            string submittedValue = post.Data[Model.SelectedField].ToString();
 
             bool isMatch = false;
             switch (Model.Condition)

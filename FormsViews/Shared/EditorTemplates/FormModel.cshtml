@@ -1,0 +1,24 @@
+﻿@model EPiServer.Forms.Samples.Criteria.FormModel
+@using EPiServer.Forms.Samples
+@using EPiServer.Personalization.VisitorGroups.Criteria
+@using EPiServer.Personalization.VisitorGroups
+@using EPiServer.Shell.Web.Mvc.Html;
+
+<div id='FormModel'>
+    <div class="epi-critera-block">
+        <span class="epi-criteria-inlineblock">
+            @Html.LabelFor(model => model.SubmissionStatus, Html.Translate("/episerver/forms/samples/criteria/formcriterion/submissionstatus").ToString(), new { @class = "episize200" })
+        </span>
+        <span class="epi-criteria-inlineblock">
+            @*@Html.DojoEditorFor(model => model.SubmissionStatus)*@
+        </span>
+    </div>
+    <div class="epi-critera-block">
+        <span class="epi-criteria-inlineblock">
+            @Html.LabelFor(model => model.SelectedForm, Html.Translate("/episerver/forms/samples/criteria/formcriterion/selectedform").ToString(), new { @class = "episize200" })
+        </span>
+        <span class="epi-criteria-inlineblock">
+            @*@Html.DojoE*@ditorFor(model => model.selectedform)
+        </span>
+    </div>
+</div>

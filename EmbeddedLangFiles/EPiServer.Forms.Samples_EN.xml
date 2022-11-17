@@ -188,6 +188,10 @@
             <caption>Map height</caption>
             <help>The height of the map associated with the element.</help>
           </mapheight>
+          <apikey>
+            <caption>Client google API key</caption>
+            <help>The key use for google autocomplete and maps service.</help>
+          </apikey>
           <addresslabel>
             <caption>Detail Address</caption>
             <help></help>

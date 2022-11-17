@@ -1,4 +1,4 @@
-﻿using EPiServer.Core;
+using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
@@ -130,8 +130,8 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         {
             var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
             return new List<Tuple<string, string>>() {
-               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/datetimepicker.modified.js"),
-               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/DateTimeElementBlock.js")
+               new Tuple<string, string>("script", publicVirtualPath + "/js/datetimepicker.modified.js"),
+               new Tuple<string, string>("script", publicVirtualPath + "/js/DateTimeElementBlock.js")
             };
         }
 

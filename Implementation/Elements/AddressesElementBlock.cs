@@ -1,28 +1,22 @@
-﻿using EPiServer.Core;
+using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
 using EPiServer.Forms.Core.Internal;
 using EPiServer.Forms.Core.Models.Internal;
 using EPiServer.Forms.EditView;
-using EPiServer.Forms.EditView.DataAnnotations;
-using EPiServer.Forms.EditView.Models.Internal;
 using EPiServer.Forms.Helpers.Internal;
-using EPiServer.Forms.Implementation;
 using EPiServer.Forms.Implementation.Elements.BaseClasses;
-using EPiServer.Forms.Implementation.Validation;
-using EPiServer.Forms.Samples.EditView;
-using EPiServer.Forms.Samples.EditView.SelectionFactory;
 using EPiServer.Forms.Samples.Implementation.Models;
 using EPiServer.Forms.Samples.Implementation.Validation;
-using EPiServer.Shell.ObjectEditing;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using System.Linq;
-using System.Web;
 using System.Collections.Generic;
-using EPiServer.Configuration;
+using EPiServer.ServiceLocation;
+using Microsoft.AspNetCore.Http;
+using EPiServer.Forms.Samples.Configuration;
+using System.Configuration;
+using EPiServer.Logging;
 
 namespace EPiServer.Forms.Samples.Implementation.Elements
 {
@@ -32,6 +26,9 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
     [ContentType(GUID = "{CB332A5D-096D-4228-BE9A-B6E16481D8FB}", GroupName = ConstantsFormsUI.FormElementGroup, Order = 2230)]
     public class AddressesElementBlock : InputElementBlockBase, IElementCustomFormatValue, IElementRequireClientResources
     {
+        private Injected<IFormSamplesConfiguration> _config;
+        private static readonly ILogger _logger = LogManager.GetLogger(typeof(AddressesElementBlock));
+
         /// <inheritdoc />
         [Ignore]
         public override string PlaceHolder { get; set; }
@@ -47,6 +44,31 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         [Display(GroupName = SystemTabNames.Content, Order = -6200)]
         [Range(100, 350)]
         public virtual int MapHeight { get; set; }
+
+        [Display(GroupName = SystemTabNames.Content, Order = -6210)]
+        public virtual string ApiKey
+        {
+            get
+            {
+                var apiKey = this.GetPropertyValue(content => content.ApiKey);
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    try
+                    {
+                        apiKey = _config.Service.ClientApiKey;
+                    }
+                    catch (ConfigurationErrorsException ex)
+                    {
+                        _logger.Warning("Cannot get ClientApiKey from app settings.", ex);
+                    }
+                }
+                return apiKey;
+            }
+            set
+            {
+                this.SetPropertyValue(content => content.ApiKey, value);
+            }
+        }
 
         [Display(GroupName = SystemTabNames.Content, Order = -6300)]
         public virtual string AddressLabel { get; set; }
@@ -84,7 +106,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 }
                 else
                 {
-                    return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, validator);
+                    return string.Concat(validators, Forms.Constants.RecordSeparator, validator);
                 }
             }
             set
@@ -95,13 +117,14 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
 
         public override object GetSubmittedValue()
         {
-            var rawSubmittedData = HttpContext.Current.Request.Form;
-            var isJavaScriptSupport = rawSubmittedData.Get(EPiServer.Forms.Constants.FormWithJavaScriptSupport);
+            var httpContext = ServiceLocator.Current.GetInstance<IHttpContextAccessor>();
+            var rawSubmittedData = httpContext.HttpContext.Request.Form;
+            var isJavaScriptSupport = rawSubmittedData[EPiServer.Forms.Constants.FormWithJavaScriptSupport];
             if (isJavaScriptSupport == "true")
             {
                 return base.GetSubmittedValue();
             }
-            string[] addressComponents = rawSubmittedData.GetValues(this.Content.GetElementName());
+            string[] addressComponents = rawSubmittedData[this.Content.GetElementName()];
             if (addressComponents == null || addressComponents.Length < 1)
             {
                 return null;
@@ -123,7 +146,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public virtual object GetFormattedValue()
         {
-            var submittedValue = (GetSubmittedValue() as string) ?? string.Empty;
+            var submittedValue = GetSubmittedValue().ToString() ?? string.Empty;
             return submittedValue;
         }
 
@@ -131,31 +154,6 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         {
             var defaultValue = GetDefaultValue();
             return defaultValue?.ToObject<AddressInfo>() ?? new AddressInfo();
-        }
-
-        public override string GetDefaultValue()
-        {
-            var defaultValue = PredefinedValue;
-
-            var suggestedValues = GetAutofillValues();
-            if (suggestedValues.Any())
-            {
-                var suggestedValue = suggestedValues.FirstOrDefault();
-                if (!string.IsNullOrEmpty(suggestedValue))
-                {
-                    defaultValue = suggestedValue;
-                }
-            }
-
-            // get submitted value in non-js mode
-            var rawSubmittedData = HttpContext.Current.Request.Form;
-            var isJavaScriptSupport = rawSubmittedData.Get(EPiServer.Forms.Constants.FormWithJavaScriptSupport);
-            if (isJavaScriptSupport == null)
-            {
-                defaultValue = GetSubmittedValue() as string ?? defaultValue;
-            }
-
-            return defaultValue;
         }
 
         /// <summary>
@@ -185,13 +183,15 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
 
         public IEnumerable<Tuple<string, string>> GetExtraResources()
         {
-            if (!string.IsNullOrWhiteSpace(Settings.Instance.GoogleMapsApiV3Url))
+            
+            if (!string.IsNullOrWhiteSpace(_config.Service.GoogleMapsApiV3Url))
             {
                 var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
                 var currentPageLanguage = FormsExtensions.GetCurrentPageLanguage();
+                var map_url = _config.Service.GoogleMapsApiV3Url + "&key=" + ApiKey;
                 return new List<Tuple<string, string>>() {
-                    new Tuple<string, string>("script", string.Format(Settings.Instance.GoogleMapsApiV3Url, currentPageLanguage)),
-                    new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/AddressesElementBlock.js")
+                    new Tuple<string, string>("script", string.Format(map_url, currentPageLanguage)),
+                    new Tuple<string, string>("script", publicVirtualPath + "/js/AddressesElementBlock.js")
                 };
             }
             return new List<Tuple<string, string>>();

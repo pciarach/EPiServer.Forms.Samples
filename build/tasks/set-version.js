@@ -1,12 +1,9 @@
 "use strict";
 
 const gulp = require("gulp"),
-    gutil = require("gulp-util"),
     program = require("commander"),
-    xmlpoke = require("xmlpoke"),
-    getVersion = require("./get-version"),
-    tsm = require("teamcity-service-messages");
-
+    xmlpoke = require("xmlpoke");
+    
 function setVersion() {
     gulp.task("set-version", function (done) {
         if (process.argv.indexOf("--build") === -1) {
@@ -14,7 +11,6 @@ function setVersion() {
             throw new Error();
         }
         if (process.argv.indexOf("--jirabranch") === -1) {
-            gutil.log(gutil.colors.cyan("Parameter '--jirabranch' is required"));
             throw new Error();
         }
         program
@@ -44,11 +40,6 @@ function setVersion() {
         xmlpoke("./build/version.props", function (xml) {
             xml.set("//Project/PropertyGroup/VersionSuffix", preReleaseInfo);
 
-        });
-
-        tsm.setParameter({
-            name: "packageVersion",
-            value: getVersion().packageVersion
         });
 
         done();

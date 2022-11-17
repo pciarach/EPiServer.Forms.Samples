@@ -1,0 +1,10 @@
+<Project>
+	<PropertyGroup>
+		<FormVersion>5.3.0</FormVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Update="EPiServer.Forms" Version="$(FormVersion)" />
+		<PackageReference Update="EPiServer.CMS.UI.Core" Version="$(CmsCoreVersion)" />
+		<PackageReference Update="EPiServer.CMS.AspNetCore.Templating" Version="$(CmsCoreVersion)"/>
+	</ItemGroup>
+</Project>

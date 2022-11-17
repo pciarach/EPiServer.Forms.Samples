@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using System.Web;
 using EPiServer.Forms.Core.Models;
 using EPiServer.Framework.Localization;
+using EPiServer.Forms.Samples.Configuration;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace EPiServer.Forms.Samples.Implementation.Validation
 {
@@ -48,98 +51,5 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
 
             return model;
         }
-    }
-
-    [ServiceConfiguration(ServiceType = typeof(IAddressValidateService))]
-    public class GoogleAddressValidateService : IAddressValidateService
-    {
-        private readonly string GoogleApiKey = GetApiKey();
-        private const string GoogleMapsGeocodingAPI = "https://maps.googleapis.com/maps/api/geocode/json?";
-        
-        private readonly string currentPageLanguage = FormsExtensions.GetCurrentPageLanguage() ?? "en";
-
-        public bool Validate(string address, string street, string city, string state, string postalCode, string country, bool ignoreDetails = false)
-        {            
-           
-            if (string.IsNullOrWhiteSpace(GoogleApiKey))
-            {
-                return false;
-            }
-          
-            var verifyUrl = GoogleMapsGeocodingAPI;
-
-            if (!ignoreDetails && !string.IsNullOrWhiteSpace(address))
-            {
-                verifyUrl = verifyUrl.AddQueryString("address", address);
-            }
-
-            // build components filter
-            List<string> componentFilter = new List<string>();
-            if (!string.IsNullOrWhiteSpace(street))
-            {
-                componentFilter.Add("route:" + street);
-            }
-            if (!string.IsNullOrWhiteSpace(city))
-            {
-                componentFilter.Add("locality:" + city);
-            }
-            if (!string.IsNullOrWhiteSpace(state))
-            {
-                componentFilter.Add("administrative_area:" + state);
-            }
-            if (!string.IsNullOrWhiteSpace(postalCode))
-            {
-                componentFilter.Add("postal_code:" + postalCode);
-            }
-            if (!string.IsNullOrWhiteSpace(country))
-            {
-                componentFilter.Add("country:" + country);
-            }
-            if (componentFilter.Count > 0)
-            {
-                verifyUrl = verifyUrl.AddQueryString("components", string.Join("|", componentFilter));
-            }
-            verifyUrl = verifyUrl.AddQueryString("key", GoogleApiKey);
-            verifyUrl = verifyUrl.AddQueryString("language", currentPageLanguage);
-
-            // delegate the validation for google place
-            try
-            {
-                var client = new WebClient();
-                var responseString = client.DownloadString(verifyUrl);
-                var result = responseString.ToObject<GooglePlaceValidateResponse>();
-                return result.status == GeocodingResponse.OK;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static string GetApiKey()
-        {
-            if (string.IsNullOrEmpty(Settings.Instance.GoogleMapsApiV3Url))
-            {
-                return null;
-            }
-            Uri googleMapUri = new Uri(Settings.Instance.GoogleMapsApiV3Url);
-            string apiKey = HttpUtility.ParseQueryString(googleMapUri.Query).Get("key");
-            return apiKey;
-        }
-    }
-
-    public class GooglePlaceValidateResponse
-    {
-        public string status { get; set; }
-    }
-
-    public class GeocodingResponse
-    {
-        public const string OK = "OK";
-        public const string ZERO_RESULTS = "ZERO_RESULTS";
-        public const string OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT";
-        public const string REQUEST_DENIED = "REQUEST_DENIED";
-        public const string INVALID_REQUEST = "INVALID_REQUEST";
-        public const string UNKNOWN_ERROR = "UNKNOWN_ERROR";
     }
 }

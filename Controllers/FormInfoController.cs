@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 using EPiServer.Forms.Helpers;
 using EPiServer.Forms.Implementation.Elements;
 using EPiServer.Forms.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EPiServer.Forms.Samples.Controllers
 {
@@ -29,13 +30,13 @@ namespace EPiServer.Forms.Samples.Controllers
             IContentData content;
             if (!_contentRepository.Service.TryGet<IContentData>(formGuid, out content))
             {
-                return Json(null, JsonRequestBehavior.AllowGet);
+                return Json(null);
             }
 
             var formContainerBlock = content as FormContainerBlock;
             if (formContainerBlock == null)
             {
-                return Json(null, JsonRequestBehavior.AllowGet);
+                return Json(null);
             }
 
             var formIden = new FormIdentity(formGuid, (content as ILocalizable).Language.Name);
@@ -43,7 +44,7 @@ namespace EPiServer.Forms.Samples.Controllers
                                     .Where(fn => !fn.ElementId.StartsWith(EPiServer.Forms.Constants.SYSTEMCOLUMN_PREFIX))
                                     .OrderBy(fn => fn.FriendlyName);
 
-            return Json(friendlyNames, JsonRequestBehavior.AllowGet);
+            return Json(friendlyNames);
         }
     }
 }

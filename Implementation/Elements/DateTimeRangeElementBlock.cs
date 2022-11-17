@@ -1,4 +1,4 @@
-﻿using EPiServer.Core;
+using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
 using EPiServer.Forms.Core;
@@ -21,6 +21,9 @@ using System.Web;
 using System.Collections.Generic;
 using EPiServer.Forms.Helpers.Internal;
 using EPiServer.Forms.EditView.DataAnnotations;
+using EPiServer.ServiceLocation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace EPiServer.Forms.Samples.Implementation.Elements
 {
@@ -64,9 +67,12 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public override object GetSubmittedValue()
         {
-            var submittedValue = (base.GetSubmittedValue() as string) ?? string.Empty;
-            var datetimes = submittedValue.Split('|', ',');
-            if (datetimes.All(datetime => string.IsNullOrWhiteSpace(datetime))) {
+            string[] separatingStrings = { "|" };
+            var submittedValue = base.GetSubmittedValue().ToString() ?? string.Empty;
+
+            var datetimes = submittedValue.Split(separatingStrings, StringSplitOptions.RemoveEmptyEntries);
+            if (datetimes.All(datetime => string.IsNullOrWhiteSpace(datetime)))
+            {
                 return null;
             }
             return datetimes;
@@ -83,26 +89,29 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             {
                 return null;
             }
-            var formattedValues = submittedValues.Select(value => {               
-                    var valueString = value.ToString();
-                    DateTime dateTimeValue;
-                    if (!DateTime.TryParse(valueString, out dateTimeValue))
-                    {
+            var formattedValues = submittedValues.Select(value =>
+            {
+                var valueString = value.ToString();
+                DateTimeOffset dateTimeValue;
+                if (!DateTimeOffset.TryParse(valueString, out dateTimeValue))
+                {
+                    return valueString;
+                }
+                var dateTimeConvert = dateTimeValue.DateTime.ToString("s", CultureInfo.InvariantCulture);
+                var dateTimeSegments = dateTimeConvert.Split(new char[] { 'T' }, StringSplitOptions.RemoveEmptyEntries);
+                var pickerType = (DateTimePickerType)this.PickerType;
+                switch (pickerType)
+                {
+                    case DateTimePickerType.TimePicker:
+                        return dateTimeSegments[1];
+                    case DateTimePickerType.DatePicker:
+                        return dateTimeSegments[0];
+                    default:
                         return valueString;
-                    }
-                    var dateTimeSegments = dateTimeValue.ToString("s", CultureInfo.InvariantCulture).Split(new char[] { 'T' }, StringSplitOptions.RemoveEmptyEntries);
-                    var pickerType = (DateTimePickerType)this.PickerType;
-                    switch (pickerType)
-                    {
-                        case DateTimePickerType.TimePicker:
-                            return dateTimeSegments[1];
-                        case DateTimePickerType.DatePicker:
-                            return dateTimeSegments[0];
-                        default:
-                            return valueString;
-                    }
+                }
             });
-            return string.Join("|", formattedValues);            
+
+            return string.Join("|", formattedValues);
         }
 
         /// <inheritdoc />
@@ -121,33 +130,9 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             return dateTimeElementInfo;
         }
 
-        public override string GetDefaultValue()
+        public string GetDateTimeDefaultValue()
         {
-            // get submitted value in non-js mode
-            var rawSubmittedData = HttpContext.Current.Request.Form;
-            var isJavaScriptSupport = rawSubmittedData.Get(EPiServer.Forms.Constants.FormWithJavaScriptSupport);
-            if (isJavaScriptSupport == null)
-            {
-                var rangeSegments = GetSubmittedValue() as string[];
-                if (rangeSegments != null)
-                {
-                    return rangeSegments.Select(ConvertToClientDateTime).ToStringWithSeparator("|");
-                }
-            }
-
-            var defaultValue = PredefinedValue;
-
-            var suggestedValues = GetAutofillValues();
-            if (suggestedValues.Any())
-            {
-                var suggestedValue = suggestedValues.FirstOrDefault();
-                if (!string.IsNullOrEmpty(suggestedValue))
-                {
-                    defaultValue = suggestedValue;
-                }
-            }
-
-            return defaultValue?.Split('|', ',').Select(ConvertToClientDateTime).ToStringWithSeparator("|");
+            return GetDefaultValue()?.Split('|', ',').Select(ConvertToClientDateTime).ToStringWithSeparator("|");
         }
         // datetime in server should have this format YYYY-MM-DDTHH:mmTZD(ISO-8601) | YYYY-MM-DDTHH:mmTZD(ISO-8601)
         // might need to transform to date only(yyyy/MM/dd | yyyy/MM/dd) or time only(hh:mm | hh:mm)
@@ -175,8 +160,8 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         {
             var publicVirtualPath = ModuleHelper.GetPublicVirtualPath(Constants.ModuleName);
             return new List<Tuple<string, string>>() {
-               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/datetimepicker.modified.js"),
-               new Tuple<string, string>("script", publicVirtualPath + "/ClientResources/ViewMode/DateTimeElementBlock.js")
+               new Tuple<string, string>("script", publicVirtualPath + "/js/datetimepicker.modified.js"),
+               new Tuple<string, string>("script", publicVirtualPath + "/js/DateTimeElementBlock.js")
             };
         }
     }

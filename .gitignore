@@ -202,4 +202,6 @@ $RECYCLE.BIN/
 
 
 .idea/
-EPiServer.Forms.Samples/modules/_protected
+modules/_protected
+out
+nupkgs

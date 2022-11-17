@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs");
-const defaultVersionPath = "./build/version.props";
+const defaultVersionPath = "./build/props/version.props";
 
 /**
  * @param {string} versionPrefixPath 
