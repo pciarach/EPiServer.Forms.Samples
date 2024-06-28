@@ -6,6 +6,7 @@ using EPiServer.Forms.Samples.Implementation.Elements;
 using EPiServer.Framework.Localization;
 using EPiServer.ServiceLocation;
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace EPiServer.Forms.Samples.Implementation.Validation
@@ -17,25 +18,25 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     {
         private Injected<LocalizationService> _localizationService;
         protected LocalizationService LocalizationService { get { return _localizationService.Service; } }
+        public override int ValidationOrder => 1000;
 
         /// <inheritdoc />
         public override bool? Validate(IElementValidatable targetElement)
         {
             var submittedValue = targetElement.GetSubmittedValue() as string;
+            // if the value is null, then let the RequiredValidator do the work
             if (string.IsNullOrEmpty(submittedValue))
             {
                 return true;
             }
 
             DateTime dateTime;
-            if (DateTime.TryParse(submittedValue, out dateTime))
-            {
-                return true;
-            }
-            else
+            if (!DateTime.TryParse(submittedValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
             {
                 return false;
             }
+
+            return true;
         }
 
         /// <inheritdoc />
@@ -65,6 +66,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     {
         private Injected<LocalizationService> _localizationService;
         protected LocalizationService LocalizationService { get { return _localizationService.Service; } }
+        public override int ValidationOrder => 1000;
 
         /// <inheritdoc />
         public override bool? Validate(IElementValidatable targetElement)
@@ -84,14 +86,17 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
             }
             DateTime startDateTime;
             DateTime endDateTime;
-            var isStartDateValid = DateTime.TryParse(submittedValues[0], out startDateTime);
-            var isEndDateValid = DateTime.TryParse(submittedValues[1], out endDateTime);
+            var isStartDateValid = DateTime.TryParse(submittedValues[0], CultureInfo.InvariantCulture, 
+                DateTimeStyles.None, out startDateTime);
+            var isEndDateValid = DateTime.TryParse(submittedValues[1], CultureInfo.InvariantCulture, 
+                DateTimeStyles.None, out endDateTime);
             if (!isStartDateValid || !isEndDateValid)
             {
                 return false;
             }
             var datetimeRangeBlock = targetElement as DateTimeRangeElementBlock;
-            var pickerType = (datetimeRangeBlock != null) ? (DateTimePickerType)datetimeRangeBlock.PickerType : DateTimePickerType.DateTimePicker;
+            var pickerType = (datetimeRangeBlock != null) ? (DateTimePickerType)datetimeRangeBlock.PickerType : 
+                DateTimePickerType.DateTimePicker;
             switch (pickerType)
             {
                 case DateTimePickerType.DatePicker:
@@ -135,11 +140,11 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
             var submittedValue = targetElement.GetSubmittedValue() as string;
             if (string.IsNullOrEmpty(submittedValue))
             {
-                return true;
+                return false;
             }
 
             DateTime dateTime;
-            if (!DateTime.TryParse(submittedValue, out dateTime))
+            if (!DateTime.TryParse(submittedValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
             {
                 return false;
             }

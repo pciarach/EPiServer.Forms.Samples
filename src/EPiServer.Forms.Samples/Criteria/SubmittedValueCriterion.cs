@@ -42,7 +42,7 @@ namespace EPiServer.Forms.Samples.Criteria
             {
                 return false;
             }
-            var language = ContentLanguage.PreferredCulture.TwoLetterISOLanguageName;
+            var language = ContentLanguage.PreferredCulture.Name;
             var progressiveSubmitInfo = _progressiveSubmitInfoProvider.Service.GetProgressiveSubmitInfo(content.ContentGuid, httpContext, language);
             if (progressiveSubmitInfo == null || !progressiveSubmitInfo.IsFinalized)
             {

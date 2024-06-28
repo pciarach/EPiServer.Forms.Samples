@@ -6,15 +6,18 @@
 		<NuspecFile>EPiServer.Forms.Samples.nuspec</NuspecFile>
 		<OutputType>Library</OutputType>
 		<IsPackable>true</IsPackable>
-		<NuspecProperties>Configuration=$(Configuration);Version=$(Version);FormsVersion=$(formsVersion);FormsNextMajorVersion=$(formsNextMajorVersion)</NuspecProperties>
+		<NuspecProperties>Configuration=$(Configuration);Version=$(Version);FormsVersion=$(formsVersion);FormsNextMajorVersion=$(formsNextMajorVersion);
+			CoreVersion=$(coreVersion);CoreNextMajorVersion=$(coreNextMajorVersion);
+			UIVersion=$(uiVersion);UINextMajorVersion=$(uiNextMajorVersion)
+		</NuspecProperties>
 		<PackageOutputPath>$(SolutionDir)nupkgs\</PackageOutputPath>
 		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   		<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="EPiServer.Forms" />
-		<PackageReference Include="EPiServer.CMS.UI.Core" />
-    <PackageReference Include="EPiServer.CMS.AspNetCore.Templating" />
+    	<PackageReference Include="EPiServer.CMS.UI" />
+    	<PackageReference Include="EPiServer.CMS.AspNetCore.HtmlHelpers" />
 		<EmbeddedResource Include="ClientResources\ViewMode\**\*.*" />
 		<EmbeddedResource Include="EmbeddedLangFiles\**\*" />
 	</ItemGroup>

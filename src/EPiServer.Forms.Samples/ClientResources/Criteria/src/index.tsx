@@ -21,7 +21,6 @@ const FormsCriteriaValue = (props: any) => {
     const getFieldsByFormId = (formGuid: any) => {
         axios.get("../EPiServer.Forms.Samples/FormInfo/GetElementFriendlyNames?formGuid=" + formGuid)
             .then(function (response) {
-                console.log(response);
                 setFields(response.data ?? []);
             })
             .catch(function (error) {
@@ -99,6 +98,7 @@ const FormsCriteriaValue = (props: any) => {
                         outlined
                         label={props.editorConfig.value.label}
                         defaultValue={localModelState.value}
+                        value={localModelState.value ?? ''}
                         required={props.editorConfig.value.required}
                         onChange={(evt) => {
                             let newState = { ...localModelState };

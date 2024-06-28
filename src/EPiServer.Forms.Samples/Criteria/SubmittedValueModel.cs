@@ -37,6 +37,7 @@ namespace EPiServer.Forms.Samples.Criteria
         /// <summary>
         /// Gets or sets the value to be used for comparisons
         /// </summary>
+        [Required]
         [CriterionPropertyEditor(LabelTranslationKey = "/episerver/forms/samples/criteria/submittedvaluecriterion/value")]
         public string Value { get; set; }
 

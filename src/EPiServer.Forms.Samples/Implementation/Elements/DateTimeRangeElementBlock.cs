@@ -49,14 +49,14 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             {
                 var pickerValidator = typeof(DateTimeRangeValidator).FullName;
                 var validators = this.GetPropertyValue(content => content.Validators);
+
                 if (string.IsNullOrEmpty(validators))
                 {
                     return pickerValidator;
                 }
-                else
-                {
-                    return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, pickerValidator);
-                }
+
+                return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, pickerValidator);
+
             }
             set
             {
@@ -67,7 +67,7 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
         /// <inheritdoc />
         public override object GetSubmittedValue()
         {
-            string[] separatingStrings = { "|" };
+            string[] separatingStrings = { "|" , Forms.Constants.SelectionItemSeparator };
             var submittedValue = base.GetSubmittedValue().ToString() ?? string.Empty;
 
             var datetimes = submittedValue.Split(separatingStrings, StringSplitOptions.RemoveEmptyEntries);
