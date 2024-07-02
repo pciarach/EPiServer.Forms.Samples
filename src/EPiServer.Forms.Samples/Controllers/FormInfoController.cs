@@ -1,17 +1,13 @@
 ﻿using EPiServer.Core;
 using EPiServer.Forms.Core;
-using EPiServer.Forms.Core.Data;
-using EPiServer.ServiceLocation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EPiServer.Forms.Helpers;
-using EPiServer.Forms.Implementation.Elements;
 using EPiServer.Forms.Core.Models;
+using EPiServer.Forms.Implementation.Elements;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell.Web.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 
 namespace EPiServer.Forms.Samples.Controllers
 {
@@ -44,7 +40,7 @@ namespace EPiServer.Forms.Samples.Controllers
                                     .Where(fn => !fn.ElementId.StartsWith(EPiServer.Forms.Constants.SYSTEMCOLUMN_PREFIX))
                                     .OrderBy(fn => fn.FriendlyName);
 
-            return Json(friendlyNames);
+            return new JsonDataResult(friendlyNames);
         }
     }
 }

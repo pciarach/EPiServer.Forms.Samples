@@ -1,21 +1,11 @@
-using EPiServer.Forms.Helpers.Internal;
-using EPiServer.Forms.Samples.Business;
-using EPiServer.Forms.Samples.Configuration;
-using EPiServer.Forms.Samples.Implementation.Models;
-using EPiServer.Forms.Samples.Implementation.Validation;
+using EPiServer.Forms.Samples.Controllers;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
-using EPiServer.Logging;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell.Modules;
-using EPiServer.Shell.Web.Internal;
-using EPiServer.Web.Hosting;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Web;
+using System.Text.Json;
 
 
 namespace EPiServer.Forms.Samples
@@ -48,6 +38,16 @@ namespace EPiServer.Forms.Samples
                     };
                     options.Items.Add(module);
                 }
+            });
+
+            serviceConfigurationContext.Services.UseSystemTextJsonSerialization(new[]
+            {
+                typeof(FormInfoController),
+                typeof(ExternalValidateController)
+            },
+            settings =>
+            {
+                settings.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
         }
 

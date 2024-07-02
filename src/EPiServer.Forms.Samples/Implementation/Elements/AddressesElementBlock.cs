@@ -116,10 +116,8 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 {
                     return validator;
                 }
-                else
-                {
-                    return string.Concat(validators, Forms.Constants.RecordSeparator, validator);
-                }
+
+                 return string.Concat(validators, Forms.Constants.RecordSeparator, validator);
             }
             set
             {

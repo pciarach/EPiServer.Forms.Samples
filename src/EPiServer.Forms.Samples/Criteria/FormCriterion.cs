@@ -76,7 +76,7 @@ namespace EPiServer.Forms.Samples.Criteria
         private bool HasAlreadyPosted(Guid formId, HttpContext httpContext)
         {
             var psService = ServiceLocator.Current.GetInstance<ProgressiveSubmitInfoService>();
-            var language = ContentLanguage.PreferredCulture.TwoLetterISOLanguageName;
+            var language = ContentLanguage.PreferredCulture.Name;
             var psInfo = psService.GetProgressiveSubmitInfo(formId, httpContext, language);
             if (psInfo != null && psInfo.IsFinalized)
             {

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 
 namespace EPiServer.Forms.Samples.Implementation.Elements
 {
@@ -44,14 +45,13 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
             {
                 var pickerValidator = GetValidatorTypeForPicker((DateTimePickerType)PickerType).FullName;
                 var validators = this.GetPropertyValue(content => content.Validators);
+
                 if (string.IsNullOrEmpty(validators))
                 {
                     return pickerValidator;
                 }
-                else
-                {
-                    return string.Concat(validators, EPiServer.Forms.Constants.RecordSeparator, pickerValidator);
-                }
+
+                return string.Concat(validators, Forms.Constants.RecordSeparator, pickerValidator);
             }
             set
             {
@@ -77,6 +77,14 @@ namespace EPiServer.Forms.Samples.Implementation.Elements
                 default:
                     return null;
             }
+        }
+
+        /// <inheritdoc />
+        public override object GetSubmittedValue()
+        {
+            var submittedValue = base.GetSubmittedValue()?.ToString();
+
+            return submittedValue;
         }
 
         /// <inheritdoc />

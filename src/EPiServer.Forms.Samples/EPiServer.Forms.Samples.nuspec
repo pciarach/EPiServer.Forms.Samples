@@ -18,6 +18,8 @@
     <dependencies>
       <group targetFramework="net6.0">
         <dependency id="EPiServer.Forms" version="[$FormsVersion$,$FormsNextMajorVersion$)" include="All"/>
+        <dependency id="EPiServer.CMS.UI" version="[$UIVersion$,$UINextMajorVersion$)" include="All"/>
+        <dependency id="EPiServer.CMS.AspNetCore.HtmlHelpers" version="[$CoreVersion$,$CoreNextMajorVersion$)" include="All"/>
       </group>
     </dependencies>
     <contentFiles>

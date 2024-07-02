@@ -21,6 +21,7 @@ namespace EPiServer.Forms.Samples.Implementation.Validation
     {        
         private Injected<LocalizationService> _localizationService;
         protected LocalizationService LocalizationService { get { return _localizationService.Service; } }
+        public override int ValidationOrder => 1000;
 
         public override bool? Validate(IElementValidatable targetElement)
         {
